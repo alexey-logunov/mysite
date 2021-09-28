@@ -85,3 +85,9 @@ class FeedBackView(View):
         return render(request, 'myblog/contact.html', context={
             'form': form,
         })
+
+class SuccessView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'myblog/success.html', context={
+            'title': 'Спасибо!'
+        })
