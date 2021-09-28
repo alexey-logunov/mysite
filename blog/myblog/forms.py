@@ -4,28 +4,30 @@ from django.contrib.auth import authenticate
 from .models import Comment
 
 
-class SigUpForm(forms.Form):
+class SignUpForm(forms.Form):
     username = forms.CharField(
         max_length=100,
         required=True,
         widget=forms.TextInput(attrs={
             'class': "form-control",
             'id': "inputUsername",
+            'placeholder': "Имя пользователя"
         }),
     )
-
     password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(attrs={
-            'class': "form-control",
+            'class': "form-control mt-2",
             'id': "inputPassword",
+            'placeholder': "Пароль"
         }),
     )
     repeat_password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(attrs={
-            'class': "form-control",
+            'class': "form-control mt-2",
             'id': "ReInputPassword",
+            'placeholder': "Повторите пароль"
         }),
     )
 
@@ -102,6 +104,7 @@ class FeedBackForm(forms.Form):
 
 
 class CommentForm(forms.ModelForm):
+
     class Meta:
         model = Comment
         fields = ('text',)

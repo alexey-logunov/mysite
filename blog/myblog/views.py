@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.core.paginator import Paginator
 from .models import Post, Comment
-from .forms import SigUpForm, SignInForm, FeedBackForm, CommentForm
+from .forms import SignUpForm, SignInForm, FeedBackForm, CommentForm
 from django.contrib.auth import login, authenticate
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.mail import send_mail, BadHeaderError
@@ -13,8 +13,11 @@ from taggit.models import Tag
 class MainView(View):
     def get(self, request, *args, **kwargs):
         posts = Post.objects.all()
+        paginator = Paginator(posts, 6)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
         return render(request, 'myblog/home.html', context={
-            'posts': posts
+            'page_obj': page_obj,
         })
 
 
@@ -29,7 +32,7 @@ class PostDetailView(View):
             'common_tags': common_tags,
             'last_posts': last_posts,
             'comment_form': comment_form
-    })
+        })
 
     def post(self, request, slug, *args, **kwargs):
         comment_form = CommentForm(request.POST)
@@ -46,13 +49,13 @@ class PostDetailView(View):
 
 class SignUpView(View):
     def get(self, request, *args, **kwargs):
-        form = SigUpForm()
+        form = SignUpForm()
         return render(request, 'myblog/signup.html', context={
             'form': form,
         })
 
     def post(self, request, *args, **kwargs):
-        form = SigUpForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             if user is not None:
@@ -61,6 +64,7 @@ class SignUpView(View):
         return render(request, 'myblog/signup.html', context={
             'form': form,
         })
+
 
 class SignInView(View):
     def get(self, request, *args, **kwargs):
@@ -81,6 +85,7 @@ class SignInView(View):
         return render(request, 'myblog/signin.html', context={
             'form': form,
         })
+
 
 class FeedBackView(View):
     def get(self, request, *args, **kwargs):
@@ -106,11 +111,13 @@ class FeedBackView(View):
             'form': form,
         })
 
+
 class SuccessView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'myblog/success.html', context={
-            'title': 'Спасибо!'
+            'title': 'Спасибо'
         })
+
 
 class SearchResultsView(View):
     def get(self, request, *args, **kwargs):
@@ -128,6 +135,7 @@ class SearchResultsView(View):
             'results': page_obj,
             'count': paginator.count
         })
+
 
 class TagView(View):
     def get(self, request, slug, *args, **kwargs):
